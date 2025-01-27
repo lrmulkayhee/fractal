@@ -1,4 +1,4 @@
-import { derivative, evaluate, complex, abs } from 'mathjs';
+import { derivative, evaluate, complex, abs, exp, pi } from 'mathjs';
 import FractalGenerator from './components/FractalGenerator.js';
 import renderMathInElement from 'katex/contrib/auto-render';
 
@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', function () {
     var fractalContainer = document.getElementById('fractal-container');
     var submittedEquation = document.getElementById('submitted-equation');
     var equationForm = document.getElementById('equation-form');
-    var zoomFactor = 1;
+    var zoomFactor = 2; // Set initial zoom to 200%
 
     function generateFractal() {
         var equation = equationInput.value;
@@ -25,8 +25,11 @@ document.addEventListener('DOMContentLoaded', function () {
                 ]
             });
 
+            // Extract n from the equation
+            const n = parseInt(equation.match(/\d+/)[0]);
+
             // Find the roots of the equation
-            const roots = findRoots(equation);
+            const roots = findRoots(n);
             console.log('Roots:', roots); // Debugging statement
             const colors = generateColors(roots.length);
             console.log('Colors:', colors); // Debugging statement
@@ -37,53 +40,21 @@ document.addEventListener('DOMContentLoaded', function () {
             fractalContainer.appendChild(canvas);
 
             // Generate the fractal using Newton's method with the current zoom factor
-            fractalGenerator.generateNewton(roots, colors, zoomFactor);
+            fractalGenerator.generateNewton(roots, colors, n, zoomFactor);
         } else {
             alert('Please enter a mathematical equation.');
         }
     }
 
-    function findRoots(equation) {
-        console.log('Finding roots for equation:', equation); // Debugging statement
+    function findRoots(n) {
+        console.log('Finding roots for equation: z^' + n + ' - 1 = 0'); // Debugging statement
 
-        // Parse the equation and find its derivative
-        const f = (z) => evaluate(equation, { z: complex(z.re, z.im) });
-        const df = (z) => derivative(equation, 'z').evaluate({ z: complex(z.re, z.im) });
-
-        // Use Newton's method to find the roots
+        // Use a numerical solver to find the roots
         const roots = [];
-        const maxIterations = 100;
-        const tolerance = 1e-6;
-        const initialGuesses = [
-            { re: 1, im: 0 },
-            { re: -1, im: 0 },
-            { re: 0, im: 1 },
-            { re: 0, im: -1 }
-        ];
-
-        initialGuesses.forEach(guess => {
-            let z = guess;
-            for (let i = 0; i < maxIterations; i++) {
-                const fz = f(z);
-                const dfz = df(z);
-                const dz = {
-                    re: fz.re / dfz.re,
-                    im: fz.im / dfz.im
-                };
-                z = {
-                    re: z.re - dz.re,
-                    im: z.im - dz.im
-                };
-                if (abs(f(z)) < tolerance) {
-                    // Check if the root is already in the roots array
-                    if (!roots.some(root => abs(complex(root.re - z.re, root.im - z.im)) < tolerance)) {
-                        roots.push(z);
-                        console.log(`Root found: ${JSON.stringify(z)}`); // Debugging statement
-                    }
-                    break;
-                }
-            }
-        });
+        for (let k = 0; k < n; k++) {
+            const theta = (2 * pi * k) / n;
+            roots.push(exp(complex(0, theta)));
+        }
 
         console.log('Identified Roots:', roots); // Debugging statement
         return roots;
@@ -127,7 +98,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     generateButton.addEventListener('click', function (event) {
         event.preventDefault();
-        zoomFactor = 1; // Reset zoom factor on new equation
+        zoomFactor = 2; // Reset zoom factor on new equation
         generateFractal();
     });
 
@@ -139,12 +110,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     equationForm.addEventListener('submit', function (event) {
         event.preventDefault();
-        zoomFactor = 1; // Reset zoom factor on new equation
+        zoomFactor = 2; // Reset zoom factor on new equation
         generateFractal();
     });
-
-    // Call generateFractal initially if there's a default equation
-    if (equationInput.value) {
-        generateFractal();
-    }
 });
