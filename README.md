@@ -32,9 +32,19 @@ fractal-website
 3. Install the dependencies:
    ```
    npm install
+   
    ```
 
-4. Open `src/index.html` in a web browser to view the application.
+4. Build the project
+   ```
+   npm run build
+   ```
+
+5. Start the development server
+   ```
+   npm start
+   ```
+
 
 ## Usage Guidelines
 
