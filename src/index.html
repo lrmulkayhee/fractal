@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Fractal Generator</title>
     <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.13.18/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.13.18/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.13.18/dist/contrib/auto-render.min.js"></script>
 </head>
 <body>
     <div class="container">
@@ -12,10 +15,12 @@
         <form id="equation-form">
             <label for="equation-input">Enter Equation:</label>
             <input type="text" id="equation-input" name="equation" required>
-            <button type="button" id="generate-button">Generate Fractal</button>
+            <button type="submit" id="generate-button">Generate Fractal</button>
         </form>
+        <button id="zoom-in-button">Zoom In</button>
+        <div id="submitted-equation"></div>
         <div id="fractal-container"></div>
     </div>
-    <script src="app.js" type="module"></script>
+    <script src="bundle.js"></script>
 </body>
 </html>
